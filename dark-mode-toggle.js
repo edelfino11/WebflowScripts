@@ -59,3 +59,47 @@ function colorModeToggle() {
         htmlElement.style.setProperty(key, colorObject[key]);
       });
     }
+  }
+
+  function goDark(dark, animate) {
+    if (dark) {
+      localStorage.setItem("dark-mode", "true");
+      htmlElement.classList.add("dark-mode");
+      setColors(darkColors, animate);
+      togglePressed = "true";
+    } else {
+      localStorage.setItem("dark-mode", "false");
+      htmlElement.classList.remove("dark-mode");
+      setColors(lightColors, animate);
+      togglePressed = "false";
+    }
+
+    if (typeof toggleEl !== "undefined") {
+      toggleEl.forEach(function (element) {
+        element.setAttribute("aria-pressed", togglePressed);
+      });
+    }
+  }
+
+  // 🌞 Always start in light mode
+  goDark(false, false);
+
+  // ✅ Use your provided DOMContentLoaded block
+  window.addEventListener("DOMContentLoaded", (event) => {
+    toggleEl = document.querySelectorAll("[tr-color-toggle]");
+    toggleEl.forEach(function (element) {
+      element.setAttribute("aria-label", "View Dark Mode");
+      element.setAttribute("role", "button");
+      element.setAttribute("aria-pressed", togglePressed);
+    });
+    document.addEventListener("click", function (e) {
+      const targetElement = e.target.closest("[tr-color-toggle]");
+      if (targetElement) {
+        let darkClass = htmlElement.classList.contains("dark-mode");
+        darkClass ? goDark(false, true) : goDark(true, true);
+      }
+    });
+  });
+}
+
+colorModeToggle();
